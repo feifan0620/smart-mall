@@ -44,6 +44,7 @@ export default {
   },
   async created () {
     this.getPicCode()
+    this.$toast.success('获取成功')
   },
   methods: {
     // 获取图形验证码
