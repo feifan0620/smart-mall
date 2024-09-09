@@ -17,10 +17,10 @@
         </div>
         <div class="form-item">
           <input class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
-          <img src="@/assets/code.png" alt="">
+          <img v-if="picUrl" @click="getPicCode" :src="picUrl" alt="">
         </div>
         <div class="form-item">
-          <input class="inp" placeholder="请输入短信验证码" type="text">
+          <input v-model="picCode" class="inp" placeholder="请输入短信验证码" type="text">
           <button>获取验证码</button>
         </div>
       </div>
@@ -35,9 +35,22 @@ import request from '@/utils/request'
 
 export default {
   name: 'LoginIndex',
+  data () {
+    return {
+      picCode: '', // 用户输入的验证码
+      picKey: '', // 图片验证码的唯一标识，用于验证用户输入的验证码是否正确
+      picUrl: ''// 图片验证码的 url 地址
+    }
+  },
   async created () {
-    const res = await request.get('/captcha/image')
-    console.log(res)
+    this.getPicCode()
+  },
+  methods: {
+    async getPicCode () {
+      const { data: { base64, key } } = await request.get('/captcha/image')
+      this.picKey = key
+      this.picUrl = base64
+    }
   }
 }
 </script>
