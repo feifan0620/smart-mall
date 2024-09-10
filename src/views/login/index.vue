@@ -20,18 +20,18 @@
           <img v-if="picUrl" @click="getPicCode" :src="picUrl" alt="">
         </div>
         <div class="form-item">
-          <input class="inp" placeholder="请输入短信验证码" type="text">
+          <input v-model="smsCode" class="inp" placeholder="请输入短信验证码" type="text">
           <button @click="getSmsCode">{{ seconds === totalSeconds ? "获取验证码" : seconds + "秒后再次获取" }}</button>
         </div>
       </div>
 
-      <div class="login-btn">登录</div>
+      <div @click="login" class="login-btn">登录</div>
     </div>
   </div>
 </template>
 
 <script>
-import { getPicCode, getSmsCode } from '@/api/login'
+import { getPicCode, getSmsCode, mobileCodeLogin } from '@/api/login'
 
 export default {
   name: 'LoginIndex',
@@ -41,6 +41,7 @@ export default {
       picKey: '', // 图片验证码的唯一标识，用于验证用户输入的验证码是否正确
       picUrl: '', // 图片验证码的 url 地址
       phone: '', // 用户输入的手机号
+      smsCode: '', // 短信验证码
       totalSeconds: 60, // 总秒数
       seconds: 60, // 当前秒数
       timer: null // 验证码再次获取计时器
@@ -57,14 +58,15 @@ export default {
       this.picUrl = base64 // 存储验证码图片地址
     },
 
+    // 验证手机号和图形验证码
     validFn () {
       const phoneReg = /^1[3456789]\d{9}$/
-      const codeReg = /^\w{4}$/
+      const picCodeReg = /^\w{4}$/
       if (!phoneReg.test(this.phone)) {
         this.$toast('请输入正确的手机号')
         return false
       }
-      if (!codeReg.test(this.picCode)) {
+      if (!picCodeReg.test(this.picCode)) {
         this.$toast('请输入正确的验证码')
         return false
       }
@@ -76,13 +78,9 @@ export default {
         return
       }
       if (this.timer === null && this.totalSeconds === this.seconds) {
-        const res = await getSmsCode(this.picCode, this.picKey, this.phone)
-        if (res.status === 200) {
-          this.$toast('验证码发送成功')
-        } else {
-          this.$toast('验证码发送失败')
-          return
-        }
+        await getSmsCode(this.picCode, this.picKey, this.phone)
+        this.$toast('验证码发送成功')
+        // 设置获取短信验证码计时器
         this.timer = setInterval(() => {
           this.seconds--
           if (this.seconds <= 0) {
@@ -92,6 +90,23 @@ export default {
           }
         }, 1000)
       }
+    },
+
+    // 登录
+    async login () {
+      if (!this.validFn()) {
+        return
+      }
+      const smsCodeReg = /^\d{6}$/
+      if (!smsCodeReg.test(this.smsCode)) {
+        this.$toast('请输入正确的手机验证码')
+      }
+      // 手机验证码登录
+      const res = await mobileCodeLogin(this.phone, this.smsCode)
+      console.log(res)
+      // 登录成功后返回首页并给用户提示
+      this.$router.push('/')
+      this.$toast.success('登录成功')
     }
   }
 }
