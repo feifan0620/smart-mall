@@ -8,3 +8,15 @@ import request from '@/utils/request'
 export const getPicCode = () => {
   return request.get('/captcha/image')
 }
+
+/**
+ * @description 获取短信验证码
+ * @returns Promise
+ */
+export const getSmsCode = (captchaCode, captchaKey, mobile) => {
+  return request.get('/captcha/sendSmsCaptcha', {
+    captchaCode,
+    captchaKey,
+    mobile
+  })
+}
