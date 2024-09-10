@@ -21,7 +21,7 @@
         </div>
         <div class="form-item">
           <input v-model="picCode" class="inp" placeholder="请输入短信验证码" type="text">
-          <button>获取验证码</button>
+          <button @click="getSmsCode">{{ seconds === totalSeconds ? "获取验证码" : seconds + "秒后再次获取" }}</button>
         </div>
       </div>
 
@@ -39,12 +39,14 @@ export default {
     return {
       picCode: '', // 用户输入的验证码
       picKey: '', // 图片验证码的唯一标识，用于验证用户输入的验证码是否正确
-      picUrl: ''// 图片验证码的 url 地址
+      picUrl: '', // 图片验证码的 url 地址
+      totalSeconds: 60, // 总秒数
+      seconds: 60, // 当前秒数
+      timer: null // 验证码再次获取计时器
     }
   },
   async created () {
     this.getPicCode()
-    this.$toast.success('获取成功')
   },
   methods: {
     // 获取图形验证码
@@ -52,6 +54,18 @@ export default {
       const { data: { base64, key } } = await getPicCode()
       this.picKey = key // 存储唯一标识
       this.picUrl = base64 // 存储验证码图片地址
+    },
+    // 获取短信验证码
+    getSmsCode () {
+      if (this.timer === null && this.totalSeconds === this.seconds) {
+        this.timer = setInterval(() => {
+          this.seconds--
+          if (this.seconds <= 0) {
+            this.seconds = 60
+            clearInterval(this.timer)
+          }
+        }, 1000)
+      }
     }
   }
 }
