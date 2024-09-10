@@ -102,8 +102,8 @@ export default {
         this.$toast('请输入正确的手机验证码')
       }
       // 手机验证码登录
-      const res = await mobileCodeLogin(this.phone, this.smsCode)
-      console.log(res)
+      const { data } = await mobileCodeLogin(this.phone, this.smsCode)
+      this.$store.commit('user/setUserInfo', data)
       // 登录成功后返回首页并给用户提示
       this.$router.push('/')
       this.$toast.success('登录成功')
