@@ -8,44 +8,44 @@
       readonly
       shape="round"
       background="#f1f1f2"
-      placeholder="请在此输入搜索关键词"
+      :placeholder="placeHolder"
       @click="$router.push('/search')"
     />
 
     <!-- 轮播图 -->
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item>
-        <img src="@/assets/banner1.jpg" alt="">
-      </van-swipe-item>
-      <van-swipe-item>
-        <img src="@/assets/banner2.jpg" alt="">
-      </van-swipe-item>
-      <van-swipe-item>
-        <img src="@/assets/banner3.jpg" alt="">
+      <van-swipe-item v-for="item in bannerList" :key="item.imgName">
+        <img :src="item.imgUrl" alt="">
       </van-swipe-item>
     </van-swipe>
 
+    <!-- 通知栏 -->
+    <van-notice-bar
+      left-icon="volume-o"
+      scrollable
+      :text="notice"
+    />
+
     <!-- 导航 -->
-    <van-grid column-num="5" icon-size="40">
+    <van-grid :column-num="5" icon-size="40">
       <van-grid-item
-        v-for="item in 10" :key="item"
-        icon="http://cba.itlike.com/public/uploads/10001/20230320/58a7c1f62df4cb1eb47fe83ff0e566e6.png"
-        text="新品首发"
+        v-for="item in navList" :key="item.imgName"
+        :icon="item.imgUrl"
+        :text="item.text"
         @click="$router.push('/category')"
       />
     </van-grid>
 
     <!-- 主会场 -->
     <div class="main">
-      <img src="@/assets/main.png" alt="">
+      <img :src="picture.imgUrl" alt="">
     </div>
 
     <!-- 猜你喜欢 -->
     <div class="guess">
-      <p class="guess-title">—— 猜你喜欢 ——</p>
-
+      <p class="guess-title" v-html="richText"></p>
       <div class="goods-list">
-        <GoodsItem v-for="item in 10" :key="item"></GoodsItem>
+        <GoodsItem v-for="item in goodsList" :key="item.goods_id" :item="item"></GoodsItem>
       </div>
     </div>
   </div>
@@ -53,10 +53,32 @@
 
 <script>
 import GoodsItem from '@/components/GoodsItem.vue'
+import { getHomeData } from '@/api/home'
 export default {
   name: 'HomeIndex',
   components: {
     GoodsItem
+  },
+  data () {
+    return {
+      placeHolder: '', // 搜索框提示文字
+      bannerList: [], // 轮播图
+      notice: '', // 通知信息
+      navList: [], // 商品导航
+      picture: {}, // 首页广告图
+      richText: '—— 猜你喜欢 ——', // 首页富文本
+      goodsList: [] // 商品信息列表
+    }
+  },
+  async created () {
+    const { data: { pageData } } = await getHomeData()
+    this.placeHolder = pageData.items[0].params.placeholder
+    this.bannerList = pageData.items[1].data
+    this.notice = pageData.items[2].params.text
+    this.navList = pageData.items[3].data
+    this.picture = pageData.items[4].data[0]
+    this.richText = pageData.items[5].params.content
+    this.goodsList = pageData.items[6].data
   }
 }
 </script>
