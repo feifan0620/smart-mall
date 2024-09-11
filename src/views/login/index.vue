@@ -3,6 +3,7 @@
     <van-nav-bar
       title="会员登录"
       left-arrow
+      @click-left="$router.replace($route.query.redirectUrl || '/')"
     />
 
     <div class="container">
@@ -104,8 +105,9 @@ export default {
       // 手机验证码登录
       const { data } = await mobileCodeLogin(this.phone, this.smsCode)
       this.$store.commit('user/setUserInfo', data)
-      // 登录成功后返回首页并给用户提示
-      this.$router.push('/')
+      // 登录成功后返回首页/上一页并给用户提示
+      const url = this.$route.query.redirectUrl || '/'
+      this.$router.push(url)
       this.$toast.success('登录成功')
     }
   }

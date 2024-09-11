@@ -100,7 +100,7 @@
           <CountBox v-model="addCount"></CountBox>
         </div>
         <div class="showbtn" v-if="detail.stock_total > 0">
-          <div class="btn" v-if="this.mode === 'cart'">加入购物车</div>
+          <div class="btn" @click="addToCart" v-if="this.mode === 'cart'">加入购物车</div>
           <div class="btn now" v-else>立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
@@ -149,7 +149,6 @@ export default {
       const { data: { list } } = await getCommentList(this.goodsId)
       this.commentList = list.data
       this.total = list.total
-      console.log(list)
     },
     addFn () {
       this.mode = 'cart'
@@ -158,6 +157,26 @@ export default {
     buyFn () {
       this.mode = 'buyNow'
       this.show = true
+    },
+    addToCart () {
+      const token = this.$store.getters.token
+      console.log(token)
+
+      if (!token) {
+        this.$dialog.confirm({
+          title: '温馨提示',
+          message: '请登录后再继续操作哦~',
+          confirmButtonText: '去登录',
+          cancelButtonText: '再逛逛'
+        }).then(() => {
+          this.$router.replace({
+            path: '/login',
+            query: {
+              redirectUrl: this.$route.fullPath
+            }
+          })
+        }).catch(() => {})
+      }
     }
   },
   created () {
@@ -270,6 +289,9 @@ export default {
     }
     .time {
       color: #999;
+    }
+    .content{
+      overflow: hidden;
     }
   }
 
