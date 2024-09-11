@@ -5,6 +5,7 @@
     <van-search
       readonly
       shape="round"
+      placeholder="请输入搜索关键词"
       background="#ffffff"
       :value="querySearch"
       show-action
@@ -17,14 +18,27 @@
 
     <!-- 排序选项按钮 -->
     <div class="sort-btns">
-      <div class="sort-item" @click="getSearchResults()">综合</div>
-      <div class="sort-item" @click="getSearchResults()">销量</div>
-      <div class="sort-item" @click="getSearchResults()">价格 </div>
+      <div
+        :class="['sort-item', { active: activeIndex === 0 }]"
+        @click="toggleActive(0, 'all')">
+        综合
+      </div>
+      <div
+        :class="['sort-item', { active: activeIndex === 1 }]"
+        @click="toggleActive(1, 'sales')">
+        销量
+      </div>
+      <div
+        :class="['sort-item', { active: activeIndex === 2 }]"
+        @click="toggleActive(2, 'price')">
+        价格
+      </div>
     </div>
 
     <div class="goods-list">
       <GoodsItem v-for="item in goodsList" :key="item.goods_id" :item="item"></GoodsItem>
     </div>
+
   </div>
 </template>
 
@@ -44,15 +58,27 @@ export default {
   data () {
     return {
       page: 1,
+      activeIndex: null,
       goodsList: []
     }
   },
   methods: {
+    // 获取搜索结果
     async getSearchResults () {
-      const search = this.querySearch
       const { data: { list } } = await getGoodsList({
-        goodsName: search,
+        categoryId: this.$route.query.categoryId,
+        goodsName: this.querySearch,
         page: this.page
+      })
+      this.goodsList = list.data
+    },
+    async toggleActive (index, sortType) {
+      this.activeIndex = index
+      const { data: { list } } = await getGoodsList({
+        categoryId: this.$route.query.categoryId,
+        goodsName: this.querySearch,
+        page: this.page,
+        sortType: this.sortType
       })
       this.goodsList = list.data
     }
@@ -83,6 +109,9 @@ export default {
       text-align: center;
       flex: 1;
       font-size: 16px;
+    }
+    .active  {
+      color: #c21401;
     }
   }
 }
