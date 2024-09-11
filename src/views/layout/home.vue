@@ -14,7 +14,7 @@
 
     <!-- 轮播图 -->
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item v-for="item in bannerList" :key="item.imgName">
+      <van-swipe-item v-for="item in bannerList" :key="item.imgUrl">
         <img :src="item.imgUrl" alt="">
       </van-swipe-item>
     </van-swipe>
@@ -29,7 +29,7 @@
     <!-- 导航 -->
     <van-grid :column-num="5" icon-size="40">
       <van-grid-item
-        v-for="item in navList" :key="item.imgName"
+        v-for="item in navList" :key="item.imgUrl"
         :icon="item.imgUrl"
         :text="item.text"
         @click="$router.push('/category')"
