@@ -112,6 +112,7 @@
 <script>
 import { getGoodsDetail } from '@/api/goods'
 import { getCommentList } from '@/api/comment'
+import { addToCart } from '@/api/cart'
 import defaultAvatar from '@/assets/default-avatar.png'
 import CountBox from '@/components/CountBox'
 export default {
@@ -127,7 +128,7 @@ export default {
       current: 0, // 当前图片下标
       show: false, // 控制底部弹窗
       mode: 'cart', // 控制弹窗标题
-      addCount: 1
+      addCount: 1 // 购买数量
     }
   },
   computed: {
@@ -158,10 +159,11 @@ export default {
       this.mode = 'buyNow'
       this.show = true
     },
-    addToCart () {
+    async addToCart () {
       const token = this.$store.getters.token
       console.log(token)
 
+      // 未登录
       if (!token) {
         this.$dialog.confirm({
           title: '温馨提示',
@@ -172,11 +174,15 @@ export default {
           this.$router.replace({
             path: '/login',
             query: {
+              // fullPath 当前路由地址(带查询参数)
               redirectUrl: this.$route.fullPath
             }
           })
         }).catch(() => {})
+        return
       }
+      const res = await addToCart(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
+      console.log(res)
     }
   },
   created () {

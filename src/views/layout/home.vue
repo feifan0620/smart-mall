@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- 导航条 -->
-    <van-nav-bar title="智慧商城" fixed />
+    <van-nav-bar title="聚有品" fixed />
 
     <!-- 搜索框 -->
     <van-search
@@ -23,7 +23,7 @@
     <van-notice-bar
       left-icon="volume-o"
       scrollable
-      :text="notice"
+      text="聚有品2.0全新上线，更多新品等你来选~"
     />
 
     <!-- 导航 -->
@@ -63,10 +63,9 @@ export default {
     return {
       placeHolder: '', // 搜索框提示文字
       bannerList: [], // 轮播图
-      notice: '', // 通知信息
       navList: [], // 商品导航
       picture: {}, // 首页广告图
-      richText: '—— 猜你喜欢 ——', // 首页富文本
+      richText: '', // 首页富文本
       goodsList: [] // 商品信息列表
     }
   },
@@ -74,7 +73,6 @@ export default {
     const { data: { pageData } } = await getHomeData()
     this.placeHolder = pageData.items[0].params.placeholder
     this.bannerList = pageData.items[1].data
-    this.notice = pageData.items[2].params.text
     this.navList = pageData.items[3].data
     this.picture = pageData.items[4].data[0]
     this.richText = pageData.items[5].params.content
