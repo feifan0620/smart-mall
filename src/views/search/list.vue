@@ -6,7 +6,7 @@
       readonly
       shape="round"
       background="#ffffff"
-      value="手机"
+      :value="querySearch"
       show-action
       @click="$router.push('/search')"
     >
@@ -17,23 +17,48 @@
 
     <!-- 排序选项按钮 -->
     <div class="sort-btns">
-      <div class="sort-item">综合</div>
-      <div class="sort-item">销量</div>
-      <div class="sort-item">价格 </div>
+      <div class="sort-item" @click="getSearchResults()">综合</div>
+      <div class="sort-item" @click="getSearchResults()">销量</div>
+      <div class="sort-item" @click="getSearchResults()">价格 </div>
     </div>
 
     <div class="goods-list">
-      <GoodsItem v-for="item in 10" :key="item"></GoodsItem>
+      <GoodsItem v-for="item in goodsList" :key="item.goods_id" :item="item"></GoodsItem>
     </div>
   </div>
 </template>
 
 <script>
 import GoodsItem from '@/components/GoodsItem.vue'
+import { getGoodsList } from '@/api/goods'
 export default {
   name: 'SearchIndex',
   components: {
     GoodsItem
+  },
+  computed: {
+    querySearch () {
+      return this.$route.query.search
+    }
+  },
+  data () {
+    return {
+      page: 1,
+      goodsList: []
+    }
+  },
+  methods: {
+    async getSearchResults () {
+      const search = this.querySearch
+      const { data: { list } } = await getGoodsList({
+        goodsName: search,
+        page: this.page
+      })
+      this.goodsList = list.data
+    }
+  },
+  created () {
+    this.getSearchResults()
   }
 }
 </script>
