@@ -19,8 +19,8 @@ instance.interceptors.request.use(function (config) {
   const token = store.getters.token
   if (token) {
     config.headers['Access-Token'] = token
-    config.headers.platform = 'H5'
   }
+  config.headers.platform = 'H5'
   return config
 }, function (error) {
   // 对请求错误做些什么

@@ -31,9 +31,43 @@ export const getSmsCode = (captchaCode, captchaKey, mobile) => {
  * @returns Promise
  */
 export const mobileCodeLogin = (mobile, smsCode) => {
-  return request.post('https://apifoxmock.com/m1/4928016-4585237-default/data', {
-    isParty: false,
-    mobile,
-    smsCode
+  const myHeaders = new Headers()
+  myHeaders.append('User-Agent', 'Apifox/1.0.0 (https://apifox.com)')
+  myHeaders.append('Content-Type', 'application/json')
+  myHeaders.append('Accept', '*/*')
+  myHeaders.append('Host', 'smart-shop.itheima.net')
+  myHeaders.append('Connection', 'keep-alive')
+  myHeaders.append('Cookie', 'acw_tc=1a0c399c17260602826967593e0037f5142f0e19b69916e55a5cf1bc8c80a3')
+
+  const raw = JSON.stringify({
+    form: {
+      smsCode,
+      mobile,
+      isParty: false,
+      partyData: {}
+    }
   })
+
+  const requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  }
+
+  // 返回一个Promise
+  return fetch('http://smart-shop.itheima.net/index.php?s=/api/passport/login', requestOptions)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+      return response.text()
+    })
+    .then(result => {
+      return JSON.parse(result)
+    })
+    .catch(error => {
+      console.error('Fetch request failed:', error)
+      throw error
+    })
 }

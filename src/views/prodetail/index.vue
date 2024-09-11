@@ -71,8 +71,11 @@
         <span>首页</span>
       </div>
       <div class="icon-cart">
-        <van-icon name="shopping-cart-o" />
-        <span>购物车</span>
+        <div class="icon-cart">
+          <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
+          <van-icon name="shopping-cart-o" />
+          <span>购物车</span>
+        </div>
       </div>
       <div @click="addFn('cart')" class="btn-add">加入购物车</div>
       <div @click="buyFn()" class="btn-buy">立刻购买</div>
@@ -115,6 +118,7 @@ import { getCommentList } from '@/api/comment'
 import { addToCart } from '@/api/cart'
 import defaultAvatar from '@/assets/default-avatar.png'
 import CountBox from '@/components/CountBox'
+import { Toast } from 'vant'
 export default {
   name: 'ProDetail',
   components: { CountBox },
@@ -128,6 +132,7 @@ export default {
       current: 0, // 当前图片下标
       show: false, // 控制底部弹窗
       mode: 'cart', // 控制弹窗标题
+      cartTotal: 0, // 购物车商品总数
       addCount: 1 // 购买数量
     }
   },
@@ -161,7 +166,6 @@ export default {
     },
     async addToCart () {
       const token = this.$store.getters.token
-      console.log(token)
 
       // 未登录
       if (!token) {
@@ -181,8 +185,10 @@ export default {
         }).catch(() => {})
         return
       }
-      const res = await addToCart(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
-      console.log(res)
+      const { data } = await addToCart(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
+      this.cartTotal = data.cartTotal
+      Toast.success('添加成功')
+      this.show = false
     }
   },
   created () {
@@ -382,6 +388,22 @@ export default {
     }
     .btn-none {
       background-color: #cccccc;
+    }
+  }
+  .footer .icon-cart {
+    position: relative;
+    padding: 0 6px;
+    .num {
+      z-index: 999;
+      position: absolute;
+      top: -2px;
+      right: 0;
+      min-width: 16px;
+      padding: 0 4px;
+      color: #fff;
+      text-align: center;
+      background-color: #ee0a24;
+      border-radius: 50%;
     }
   }
 }
