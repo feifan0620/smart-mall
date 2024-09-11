@@ -25,6 +25,7 @@
 
 <script>
 import { getSearchHistory, setSearchHistory } from '@/utils/storage'
+import { Toast } from 'vant'
 export default {
   name: 'SearchIndex',
   data () {
@@ -48,7 +49,9 @@ export default {
       this.$router.push(`/searchlist?search=${key}`)
     },
     clear () {
+      this.history = []
       setSearchHistory([])
+      Toast.success('清空历史成功')
     }
   }
 }
