@@ -74,9 +74,38 @@
         <van-icon name="shopping-cart-o" />
         <span>购物车</span>
       </div>
-      <div class="btn-add">加入购物车</div>
-      <div class="btn-buy">立刻购买</div>
+      <div @click="addFn('cart')" class="btn-add">加入购物车</div>
+      <div @click="buyFn()" class="btn-buy">立刻购买</div>
     </div>
+
+    <van-action-sheet v-model="show" :title="this.mode === 'cart' ? '加入购物车' : '立即购买'">
+      <div class="product">
+        <div class="product-title">
+          <div class="left">
+            <img :src="detail.goods_image" alt="">
+          </div>
+          <div class="right">
+            <div class="price">
+              <span>¥</span>
+              <span class="nowprice">{{ detail.goods_price_max }}</span>
+            </div>
+            <div class="count">
+              <span>库存</span>
+              <span>{{ detail.stock_total }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="num-box">
+          <span>数量</span>
+          <CountBox v-model="addCount"></CountBox>
+        </div>
+        <div class="showbtn" v-if="detail.stock_total > 0">
+          <div class="btn" v-if="this.mode === 'cart'">加入购物车</div>
+          <div class="btn now" v-else>立刻购买</div>
+        </div>
+        <div class="btn-none" v-else>该商品已抢完</div>
+      </div>
+    </van-action-sheet>
   </div>
 </template>
 
@@ -84,8 +113,10 @@
 import { getGoodsDetail } from '@/api/goods'
 import { getCommentList } from '@/api/comment'
 import defaultAvatar from '@/assets/default-avatar.png'
+import CountBox from '@/components/CountBox'
 export default {
   name: 'ProDetail',
+  components: { CountBox },
   data () {
     return {
       detail: {}, // 商品详情
@@ -93,7 +124,10 @@ export default {
       commentList: [], // 评价列表
       total: 0, // 评价总数
       defaultImg: defaultAvatar,
-      current: 0 // 当前图片下标
+      current: 0, // 当前图片下标
+      show: false, // 控制底部弹窗
+      mode: 'cart', // 控制弹窗标题
+      addCount: 1
     }
   },
   computed: {
@@ -116,6 +150,14 @@ export default {
       this.commentList = list.data
       this.total = list.total
       console.log(list)
+    },
+    addFn () {
+      this.mode = 'cart'
+      this.show = true
+    },
+    buyFn () {
+      this.mode = 'buyNow'
+      this.show = true
     }
   },
   created () {
@@ -265,6 +307,53 @@ export default {
     }
     .btn-buy {
       background-color: #fe5630;
+    }
+  }
+  .product {
+    .product-title {
+      display: flex;
+      .left {
+        img {
+          width: 90px;
+          height: 90px;
+        }
+        margin: 10px;
+      }
+      .right {
+        flex: 1;
+        padding: 10px;
+        .price {
+          font-size: 14px;
+          color: #fe560a;
+          .nowprice {
+            font-size: 24px;
+            margin: 0 5px;
+          }
+        }
+      }
+    }
+
+    .num-box {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      align-items: center;
+    }
+
+    .btn, .btn-none {
+      height: 40px;
+      line-height: 40px;
+      margin: 20px;
+      border-radius: 20px;
+      text-align: center;
+      color: rgb(255, 255, 255);
+      background-color: rgb(255, 148, 2);
+    }
+    .btn.now {
+      background-color: #fe5630;
+    }
+    .btn-none {
+      background-color: #cccccc;
     }
   }
 }
