@@ -128,7 +128,7 @@ export default {
       images: [], // 商品图片
       commentList: [], // 评价列表
       total: 0, // 评价总数
-      defaultImg: defaultAvatar,
+      defaultImg: defaultAvatar, // 评价用户默认头像
       current: 0, // 当前图片下标
       show: false, // 控制底部弹窗
       mode: 'cart', // 控制弹窗标题

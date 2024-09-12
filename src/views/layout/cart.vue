@@ -21,7 +21,7 @@
           <span class="tit text-ellipsis-2">{{ item.goods.goods_name }}</span>
           <span class="bottom">
             <div class="price">¥ <span>{{ item.goods.goods_price_max }}</span></div>
-            <CountBox :goodsId="item.goods_id" :value="item.goods_num"></CountBox>
+            <CountBox @input="value => handleCountChange(value,item.goods_id,item.goods_sku_id)" :value="item.goods_num"></CountBox>
           </span>
         </div>
       </div>
@@ -65,6 +65,9 @@ export default {
     // 全选框处理函数，设置所有商品的选中状态
     handleCheckedALL () {
       this.$store.commit('cart/setCartItemCheckedALL', this.isCheckedAll)
+    },
+    handleCountChange (num, id, skuId) {
+      this.$store.dispatch('cart/setCartItemCountAsync', { id, num, skuId })
     }
   },
   computed: {

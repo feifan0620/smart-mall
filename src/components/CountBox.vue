@@ -13,9 +13,6 @@ export default {
     value: {
       type: Number,
       required: true
-    },
-    goodsId: {
-      type: Number
     }
   },
   methods: {
@@ -23,16 +20,10 @@ export default {
       if (this.value <= 1) {
         return
       }
-      this.$store.commit('cart/setCartItemCount', {
-        goodsId: this.goodsId,
-        goodsNum: this.value - 1
-      })
+      this.$emit('input', this.value - 1)
     },
     addCount () {
-      this.$store.commit('cart/setCartItemCount', {
-        goodsId: this.goodsId,
-        goodsNum: this.value + 1
-      })
+      this.$emit('input', this.value + 1)
     },
     handleChange (e) {
       const num = +e.target.value
@@ -40,10 +31,7 @@ export default {
         e.target.value = this.value
         return
       }
-      this.$store.commit('cart/setCartItemCount', {
-        goodsId: this.goodsId,
-        goodsNum: num
-      })
+      this.$emit('input', num)
     }
   }
 }
