@@ -35,3 +35,18 @@ export const submitOrder = (mode, obj) => {
     ...obj
   })
 }
+
+/**
+ * @description 获取订单列表
+ * @param {*} dataType 订单类型，all-全部，payment-待支付，delivery-待发货，received-待收货，comment-待评价
+ * @param {*} page 页码
+ * @returns Promise
+ */
+export const getMyOrderList = (dataType, page) => {
+  return request.get('/order/list', {
+    params: {
+      dataType,
+      page
+    }
+  })
+}
