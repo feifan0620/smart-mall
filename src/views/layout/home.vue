@@ -37,7 +37,7 @@
     </van-grid>
 
     <!-- 主会场 -->
-    <div class="main">
+    <div @click="$router.push('/category')" class="main">
       <img :src="picture.imgUrl" alt="">
     </div>
 
