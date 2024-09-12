@@ -15,6 +15,13 @@ export default {
       setInfo(payload)
     }
   },
-  actions: {},
+  actions: {
+    logout (context) {
+      // 清空用户信息
+      context.commit('setUserInfo', {})
+      // 调用 cart 的方法，清空购物车( 调用其他模块的方法需要设置 root: true )
+      context.commit('cart/setCartList', [], { root: true })
+    }
+  },
   getters: {}
 }
