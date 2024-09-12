@@ -82,28 +82,30 @@
 
       <!-- 买家留言 -->
       <div class="buytips">
-        <textarea placeholder="选填：买家留言（50字内）" name="" id="" cols="30" rows="10"></textarea>
+        <textarea v-model="mark" placeholder="选填：买家留言（50字内）" name="" id="" cols="30" rows="10"></textarea>
       </div>
     </div>
 
     <!-- 底部提交 -->
     <div class="footer-fixed">
       <div class="left">实付款：<span>￥{{ order.orderTotalPrice }}</span></div>
-      <div class="tipsbtn">提交订单</div>
+      <div @click="submitOrder" class="tipsbtn">提交订单</div>
     </div>
   </div>
 </template>
 
 <script>
 import { getAddressList } from '@/api/address'
-import { checkoutOrder } from '@/api/order'
+import { checkoutOrder, submitOrder } from '@/api/order'
+import { Toast } from 'vant'
 export default {
   name: 'PayIndex',
   data () {
     return {
       addressList: [],
       order: {},
-      personal: {}
+      personal: {},
+      mark: ''
     }
   },
   computed: {
@@ -151,6 +153,24 @@ export default {
         this.order = data.order
         this.personal = data.personal
       }
+    },
+    async submitOrder () {
+      if (this.mode === 'cart') {
+        await submitOrder(this.mode, {
+          cartIds: this.cartIds,
+          mark: this.mark
+        })
+      }
+      if (this.mode === 'buyNow') {
+        await submitOrder(this.mode, {
+          goodsId: this.goodsId,
+          goodsNum: this.goodsNum,
+          goodsSkuId: this.goodsSkuId,
+          mark: this.mark
+        })
+      }
+      Toast.success('支付成功')
+      this.$router.replace('/myorder')
     }
   },
 
