@@ -37,3 +37,14 @@ export const updateCartItem = (goodsId, goodsNum, goodsSkuId) => {
     goodsSkuId
   })
 }
+
+/**
+ * @description 删除购物车商品
+ * @param {*} cartIds
+ * @returns Promise
+ */
+export const deleteCartItem = (cartIds) => {
+  return request.post('/cart/clear', {
+    cartIds
+  })
+}

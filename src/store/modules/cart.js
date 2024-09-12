@@ -1,4 +1,5 @@
-import { getCartList, updateCartItem } from '@/api/cart'
+import { getCartList, updateCartItem, deleteCartItem } from '@/api/cart'
+import { Toast } from 'vant'
 
 export default {
   namespaced: true,
@@ -38,10 +39,19 @@ export default {
       })
       context.commit('setCartList', data.list)
     },
+    // 设置购物车商品数量
     async setCartItemCountAsync (context, payload) {
       const { id, num, skuId } = payload
       await updateCartItem(id, num, skuId)
       context.commit('setCartItemCount', { goodsId: id, goodsNum: num })
+    },
+    // 删除购物车商品
+    async delCartItemAsync (context) {
+      const selGoodsList = context.getters.cartCheckedItemList
+      const cartIds = selGoodsList.map(item => item.id)
+      await deleteCartItem(cartIds)
+      await context.dispatch('getCartListAsync')
+      Toast.success('删除成功')
     }
   },
   getters: {
@@ -49,24 +59,18 @@ export default {
     totalCount (state) {
       return state.cartList.reduce((sum, item) => sum + item.goods_num, 0)
     },
-    // 购物车商品选中数量
-    totalCheckedCount (state) {
-      return state.cartList.reduce((sum, item) => {
-        if (item.isChecked) {
-          return sum + item.goods_num
-        } else {
-          return sum
-        }
-      }, 0)
+    // 购物车选中商品列表
+    cartCheckedItemList (state) {
+      return state.cartList.filter(item => item.isChecked)
     },
-    // 购物车商品总价
-    totalPrice (state) {
-      return state.cartList.reduce((sum, item) => {
-        if (item.isChecked) {
-          return sum + item.goods_num * item.goods.goods_price_max
-        } else {
-          return sum
-        }
+    // 购物车选中商品数量
+    totalCheckedCount (state, getters) {
+      return getters.cartCheckedItemList.reduce((sum, item) => sum + item.goods_num, 0)
+    },
+    // 购物车选中商品总价
+    totalPrice (state, getters) {
+      return getters.cartCheckedItemList.reduce((sum, item) => {
+        return sum + item.goods_num * item.goods.goods_price_max
       }, 0).toFixed(2)
     },
     // 购物车商品全选状态，如果每一个商品都被选中了则为true，否则为false

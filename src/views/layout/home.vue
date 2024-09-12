@@ -14,7 +14,7 @@
 
     <!-- 轮播图 -->
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item v-for="item in bannerList" :key="item.imgUrl">
+      <van-swipe-item @click="$router.push(`/prodetail/${item.link.param.query.goodsId}`)" v-for="item in bannerList" :key="item.imgUrl">
         <img :src="item.imgUrl" alt="">
       </van-swipe-item>
     </van-swipe>

@@ -1,12 +1,13 @@
 <template>
   <div class="cart">
     <van-nav-bar title="购物车" fixed />
-    <!-- 购物车开头 -->
+    <div v-if="isLogin && cartList.length > 0">
+      <!-- 购物车开头 -->
     <div class="cart-title">
       <span class="all">共<i>{{ totalCount }}</i>件商品</span>
-      <span class="edit">
-        <van-icon name="edit" />
-        编辑
+      <span @click="isEdit = !isEdit" class="edit">
+        <van-icon v-show="!isEdit" name="edit" />
+        {{ isEdit ? '完成' : '编辑' }}
       </span>
     </div>
 
@@ -38,9 +39,18 @@
           <span>合计：</span>
           <span>¥ <i class="totalPrice">{{ totalPrice }}</i></span>
         </div>
-        <div v-if="true" :class="{ disabled: totalCheckedCount === 0 }" class="goPay">结算({{ totalCheckedCount }})</div>
-        <div v-else :class="{ disabled: totalCheckedCount === 0 }" class="delete">删除</div>
+        <div v-if="!isEdit" :class="{ disabled: totalCheckedCount === 0 }" class="goPay">结算({{ totalCheckedCount }})</div>
+        <div v-else @click="handleDel" :class="{ disabled: totalCheckedCount === 0 }" class="delete">删除</div>
       </div>
+    </div>
+    </div>
+
+    <div class="empty-cart" v-else>
+      <img src="@/assets/empty.png" alt="">
+      <div class="tips">
+        您的购物车是空的, 快去逛逛吧
+      </div>
+      <div class="btn" @click="$router.push('/')">去逛逛</div>
     </div>
   </div>
 </template>
@@ -55,6 +65,7 @@ export default {
   },
   data () {
     return {
+      isEdit: false
     }
   },
   methods: {
@@ -66,11 +77,19 @@ export default {
     handleCheckedALL () {
       this.$store.commit('cart/setCartItemCheckedALL', this.isCheckedAll)
     },
+    // 商品数量变化处理函数，设置商品数量
     handleCountChange (num, id, skuId) {
       this.$store.dispatch('cart/setCartItemCountAsync', { id, num, skuId })
+    },
+    handleDel () {
+      if (this.totalCheckedCount === 0) return
+      this.$store.dispatch('cart/delCartItemAsync')
     }
   },
   computed: {
+    isLogin () {
+      return this.$store.getters.token
+    },
     // 将购物车商品列表映射为计算属性
     ...mapState('cart', ['cartList']),
     // 将购物车商品总数、选中商品数量、选中商品的总价映射为计算属性
@@ -78,7 +97,7 @@ export default {
   },
   async created () {
     // 如果 token 存在（用户已登录），则通知 store 异步获取购物车列表
-    if (this.$store.getters.token) {
+    if (this.isLogin) {
       this.$store.dispatch('cart/getCartListAsync')
     }
   }
@@ -199,5 +218,31 @@ export default {
     }
   }
 
+}
+
+.empty-cart {
+  padding: 80px 30px;
+  img {
+    width: 140px;
+    height: 92px;
+    display: block;
+    margin: 0 auto;
+  }
+  .tips {
+    text-align: center;
+    color: #666;
+    margin: 30px;
+  }
+  .btn {
+    width: 110px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background-color: #fa2c20;
+    border-radius: 16px;
+    color: #fff;
+    display: block;
+    margin: 0 auto;
+  }
 }
 </style>
