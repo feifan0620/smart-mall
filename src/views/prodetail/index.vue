@@ -104,7 +104,7 @@
         </div>
         <div class="showbtn" v-if="detail.stock_total > 0">
           <div class="btn" @click="addToCart" v-if="this.mode === 'cart'">加入购物车</div>
-          <div class="btn now" v-else>立刻购买</div>
+          <div class="btn now" @click="goBuyNow" v-else>立刻购买</div>
         </div>
         <div class="btn-none" v-else>该商品已抢完</div>
       </div>
@@ -120,9 +120,11 @@ import defaultAvatar from '@/assets/default-avatar.png'
 import CountBox from '@/components/CountBox'
 import { Toast } from 'vant'
 import { mapGetters } from 'vuex'
+import loginConfirm from '@/mixins/loginConfirm'
 export default {
   name: 'ProDetail',
   components: { CountBox },
+  mixins: [loginConfirm],
   data () {
     return {
       detail: {}, // 商品详情
@@ -167,29 +169,27 @@ export default {
       this.show = true
     },
     async addToCart () {
-      const token = this.$store.getters.token
-      // 未登录
-      if (!token) {
-        this.$dialog.confirm({
-          title: '温馨提示',
-          message: '请登录后再继续操作哦~',
-          confirmButtonText: '去登录',
-          cancelButtonText: '再逛逛'
-        }).then(() => {
-          this.$router.replace({
-            path: '/login',
-            query: {
-              // fullPath 当前路由地址(带查询参数)
-              redirectUrl: this.$route.fullPath
-            }
-          })
-        }).catch(() => {})
+      if (this.loginConfirm()) {
         return
       }
       const { data } = await addToCart(this.goodsId, this.addCount, this.detail.skuList[0].goods_sku_id)
       this.cartTotal = data.cartTotal
       Toast.success('添加成功')
       this.show = false
+    },
+    async goBuyNow () {
+      if (this.loginConfirm()) {
+        return
+      }
+      this.$router.push({
+        path: '/pay',
+        query: {
+          mode: 'buyNow',
+          goodsId: this.goodsId,
+          goodsNum: this.addCount,
+          goodsSkuId: this.detail.skuList[0].goods_sku_id
+        }
+      })
     }
   },
   async created () {

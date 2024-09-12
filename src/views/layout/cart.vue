@@ -86,13 +86,15 @@ export default {
       this.$store.dispatch('cart/delCartItemAsync')
     },
     goPay () {
-      this.$router.push({
-        path: '/myorder',
-        query: {
-          mode: 'cart',
-          cartIds: this.cartCheckedItemList.map(item => item.id).join(',')
-        }
-      })
+      if (this.totalCheckedCount > 0) {
+        this.$router.push({
+          path: '/pay',
+          query: {
+            mode: 'cart',
+            cartIds: this.cartCheckedItemList.map(item => item.id).join(',')
+          }
+        })
+      }
     }
   },
   computed: {
