@@ -16,6 +16,14 @@ export const addToCart = (goodsId, goodsNum, goodsSkuId) => {
 }
 
 /**
+ * @description 获取购物车商品总数量
+ * @returns Promise
+ */
+export const CartTotalCount = () => {
+  return request.get('/cart/total')
+}
+
+/**
  * @description 获取购物车商品列表
  * @returns Promise
  */

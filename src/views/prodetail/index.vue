@@ -72,7 +72,7 @@
       </div>
       <div class="icon-cart" @click="$router.push('/cart')">
         <div class="icon-cart">
-          <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
+          <span v-if="cartTotal > 0" class="num">{{ cartTotal>99? '99+': cartTotal }}</span>
           <van-icon name="shopping-cart-o" />
           <span>购物车</span>
         </div>
@@ -115,10 +115,11 @@
 <script>
 import { getGoodsDetail } from '@/api/goods'
 import { getCommentList } from '@/api/comment'
-import { addToCart } from '@/api/cart'
+import { addToCart, CartTotalCount } from '@/api/cart'
 import defaultAvatar from '@/assets/default-avatar.png'
 import CountBox from '@/components/CountBox'
 import { Toast } from 'vant'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ProDetail',
   components: { CountBox },
@@ -132,11 +133,12 @@ export default {
       current: 0, // 当前图片下标
       show: false, // 控制底部弹窗
       mode: 'cart', // 控制弹窗标题
-      cartTotal: 0, // 购物车商品总数
-      addCount: 1 // 购买数量
+      addCount: 1, // 购买数量
+      cartTotal: 0
     }
   },
   computed: {
+    ...mapGetters('cart', ['totalCount']),
     goodsId () {
       return this.$route.params.id
     }
@@ -166,7 +168,6 @@ export default {
     },
     async addToCart () {
       const token = this.$store.getters.token
-
       // 未登录
       if (!token) {
         this.$dialog.confirm({
@@ -191,10 +192,12 @@ export default {
       this.show = false
     }
   },
-  created () {
+  async created () {
     // 获取商品详细数据
     this.getDetail()
     this.getComments()
+    const { data } = await CartTotalCount()
+    this.cartTotal = data.cartTotal
   }
 }
 </script>
@@ -397,13 +400,13 @@ export default {
       z-index: 999;
       position: absolute;
       top: -2px;
-      right: 0;
+      right: 0px;
       min-width: 16px;
       padding: 0 4px;
       color: #fff;
       text-align: center;
       background-color: #ee0a24;
-      border-radius: 50%;
+      border-radius: 10px;
     }
   }
 }
