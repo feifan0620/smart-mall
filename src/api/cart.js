@@ -14,3 +14,11 @@ export const addToCart = (goodsId, goodsNum, goodsSkuId) => {
     goodsSkuId
   })
 }
+
+/**
+ * @description 获取购物车商品列表
+ * @returns Promise
+ */
+export const getCartList = () => {
+  return request.get('/cart/list')
+}

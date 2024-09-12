@@ -38,15 +38,22 @@ const router = new VueRouter({
   ]
 })
 
+// 需要权限（登录）才能访问的页面
 const authUrl = ['/myorder', '/pay']
 
+// 路由守卫
 router.beforeEach((to, from, next) => {
   const token = store.getters.token
+  if (token && to.path === '/login') {
+    next('/')
+  }
+  // 如果访问的页面不包含在权限页面内，直接放行
   if (!authUrl.includes(to.path)) {
     next()
     return
   }
 
+  // 否则判断是否登录
   if (token) {
     next()
   } else {
