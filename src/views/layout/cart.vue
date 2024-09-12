@@ -28,8 +28,8 @@
     </div>
 
     <div class="footer-fixed">
-      <div  class="all-check">
-        <van-checkbox :value="checkedAll" @click="handleCheckedALL()" icon-size="18"></van-checkbox>
+      <div @click="handleCheckedALL" class="all-check">
+        <van-checkbox :value="isCheckedAll"  icon-size="18"></van-checkbox>
         全选
       </div>
 
@@ -38,8 +38,8 @@
           <span>合计：</span>
           <span>¥ <i class="totalPrice">{{ totalPrice }}</i></span>
         </div>
-        <div v-if="true" class="goPay">结算({{ totalCheckedCount }})</div>
-        <div v-else class="delete">删除</div>
+        <div v-if="true" :class="{ disabled: totalCheckedCount === 0 }" class="goPay">结算({{ totalCheckedCount }})</div>
+        <div v-else :class="{ disabled: totalCheckedCount === 0 }" class="delete">删除</div>
       </div>
     </div>
   </div>
@@ -58,21 +58,23 @@ export default {
     }
   },
   methods: {
+    // 复选框处理函数，设置每一项的选中状态
     handleChecked (id) {
       this.$store.commit('cart/setCartItemChecked', id)
     },
-    handleCheckedALL (e) {
-      this.$store.commit('cart/setCartItemCheckedALL', this.checkedAll)
+    // 全选框处理函数，设置所有商品的选中状态
+    handleCheckedALL () {
+      this.$store.commit('cart/setCartItemCheckedALL', this.isCheckedAll)
     }
   },
   computed: {
-    checkedAll () {
-      return this.cartList.every(item => item.isChecked)
-    },
+    // 将购物车商品列表映射为计算属性
     ...mapState('cart', ['cartList']),
-    ...mapGetters('cart', ['totalPrice', 'totalCheckedCount', 'totalCount'])
+    // 将购物车商品总数、选中商品数量、选中商品的总价映射为计算属性
+    ...mapGetters('cart', ['totalPrice', 'totalCheckedCount', 'totalCount', 'isCheckedAll'])
   },
   async created () {
+    // 如果 token 存在（用户已登录），则通知 store 异步获取购物车列表
     if (this.$store.getters.token) {
       this.$store.dispatch('cart/getCartListAsync')
     }
