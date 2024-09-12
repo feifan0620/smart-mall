@@ -39,7 +39,7 @@
           <span>合计：</span>
           <span>¥ <i class="totalPrice">{{ totalPrice }}</i></span>
         </div>
-        <div v-if="!isEdit" :class="{ disabled: totalCheckedCount === 0 }" class="goPay">结算({{ totalCheckedCount }})</div>
+        <div v-if="!isEdit" @click="goPay" :class="{ disabled: totalCheckedCount === 0 }" class="goPay">结算({{ totalCheckedCount }})</div>
         <div v-else @click="handleDel" :class="{ disabled: totalCheckedCount === 0 }" class="delete">删除</div>
       </div>
     </div>
@@ -84,6 +84,15 @@ export default {
     handleDel () {
       if (this.totalCheckedCount === 0) return
       this.$store.dispatch('cart/delCartItemAsync')
+    },
+    goPay () {
+      this.$router.push({
+        path: '/myorder',
+        query: {
+          mode: 'cart',
+          cartIds: this.cartCheckedItemList.map(item => item.id).join(',')
+        }
+      })
     }
   },
   computed: {
@@ -93,7 +102,7 @@ export default {
     // 将购物车商品列表映射为计算属性
     ...mapState('cart', ['cartList']),
     // 将购物车商品总数、选中商品数量、选中商品的总价映射为计算属性
-    ...mapGetters('cart', ['totalPrice', 'totalCheckedCount', 'totalCount', 'isCheckedAll'])
+    ...mapGetters('cart', ['totalPrice', 'totalCheckedCount', 'totalCount', 'isCheckedAll', 'cartCheckedItemList'])
   },
   async created () {
     // 如果 token 存在（用户已登录），则通知 store 异步获取购物车列表
