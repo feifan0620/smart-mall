@@ -1,22 +1,22 @@
 # 聚有品智慧商城 - H5移动电商平台
 
 ## 项目介绍
-
 **聚有品** 是一款专注于提供高品质商品和服务的H5移动电商平台。平台采用了 Vue.js 作为主要的前端开发框架，并结合了Vant UI组件库来实现高性能、美观且易于维护的用户界面。
 
-首页：
+
+### 首页：
 ![](https://my-website-assets-1323233637.cos.ap-guangzhou.myqcloud.com/imgs/%E6%99%BA%E6%85%A7%E5%95%86%E5%9F%8E%E9%A6%96%E9%A1%B5.png)
 
-分类页：
+### 分类页：
 ![](https://my-website-assets-1323233637.cos.ap-guangzhou.myqcloud.com/imgs/%E6%99%BA%E6%85%A7%E5%95%86%E5%9F%8E%E5%88%86%E7%B1%BB%E9%A1%B5.png)
 
-商品详情页：
+### 商品详情页：
 ![](https://my-website-assets-1323233637.cos.ap-guangzhou.myqcloud.com/imgs/%E6%99%BA%E6%85%A7%E5%95%86%E5%9F%8E%E5%95%86%E5%93%81%E8%AF%A6%E6%83%85.png)
 
-购物车页：
+### 购物车页：
 ![](https://my-website-assets-1323233637.cos.ap-guangzhou.myqcloud.com/imgs/%E6%99%BA%E6%85%A7%E5%95%86%E5%9F%8E%E8%B4%AD%E7%89%A9%E8%BD%A6.png)
 
-个人中心页：
+### 个人中心页：
 ![](https://my-website-assets-1323233637.cos.ap-guangzhou.myqcloud.com/imgs/%E6%99%BA%E6%85%A7%E5%95%86%E5%9F%8E%E6%88%91%E7%9A%84.png)
 
 
