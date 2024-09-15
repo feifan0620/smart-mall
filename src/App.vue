@@ -5,9 +5,5 @@
 </template>
 
 <style lang="less">
-.box{
-  height: 300px;
-  width: 300px;
-  background-color: pink;
-}
+
 </style>
